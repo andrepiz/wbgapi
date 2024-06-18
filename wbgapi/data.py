@@ -10,7 +10,7 @@ except ImportError:
     np = None
     pd = None
 
-def fetch(series, economy='all', time='all', mrv=None, mrnev=None, skipBlanks=False, labels=False, skipAggs=False, numericTimeKeys=False, params={}, db=None, **dimensions):
+def fetch(series, economy='all', time='all', mrv=None, mrnev=None, skipBlanks=False, labels=False, skipAggs=False, numericTimeKeys=False, sortRows=False, params={}, db=None, **dimensions):
     '''Retrieve rows of data for the current database
 
     Arguments:
@@ -348,11 +348,15 @@ def DataFrame(series, economy='all', time='all', index=None, columns=None, mrv=N
                 for i in index:
                     df2.loc[index_key, concepts[i]['value']] = row[i]['value']
         
-    df.sort_index(axis=0,inplace=True)
     df.sort_index(axis=1,inplace=True)
     if labels:
-        return df2.join(df)
+        df = df2.join(df)
         # return pd.concat([df2,df], axis=1, sort=False)
+    if sortRows:
+        df.sort_index(axis=0,inplace=True)
+    else:
+        df = df.iloc[::-1]
+        # df is row-reversed
         
     return df
         
